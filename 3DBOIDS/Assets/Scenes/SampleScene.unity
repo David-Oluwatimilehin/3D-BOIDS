@@ -369,18 +369,18 @@ MonoBehaviour:
   boidPrefab: {fileID: 3384555621490032966, guid: 1f67e79612afe2c4cbc8864f2ac6077a, type: 3}
   boidAnchor: {fileID: 564596801}
   numberOfBoids: 100
-  spawnRadius: 25
-  spawnDelay: 0.2
+  spawnRadius: 100
+  spawnDelay: 0.1
   boidSettings:
-    velocity: 16
+    velocity: 32
     neighbourDist: 10
     nearDist: 4
     attractPushDist: 5
     velMatching: 1.5
-    flockCentering: 1
+    flockCentering: 4
     nearAvoid: 2
     attractPull: 1
-    attractPush: 15
+    attractPush: 20
     velEasing: 0.03
 --- !u!1 &1458326087
 GameObject:
