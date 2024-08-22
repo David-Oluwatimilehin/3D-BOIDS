@@ -1,28 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FlockManager : MonoBehaviour
 {
-    Boid[] boids;
+    [SerializeField] Boid prefab;
+    public List<Boid> boids;
+    public Color chosenColor;
+
     public FlockSettings settings;
     public Transform target;
+    public Octree octree;
+    public Vector3 boundingArea;
     
     void Start()
     {
-        boids = FindObjectsOfType<Boid>();
-        foreach (Boid b in boids)
+        Bounds newBounds = new Bounds(transform.position, new Vector3(boundingArea.x, boundingArea.y, boundingArea.z));
+        
+        octree = new Octree(newBounds, maxBoidsPerNode: 50, minNodeSize: 1f);
+
+        Vector3 cubeCenter = transform.position;
+        
+
+        for (int i = 0; i < settings.spawnCount; i++)
         {
-            b.Initialise(settings, target);
+            Vector3 pos = transform.position + Random.insideUnitSphere * settings.spawnRadius;
+
+            Boid b = Instantiate(prefab);
+
+            b.SetColour(chosenColor);
+            b.Initialise(settings, target, octree);
+
+            b.transform.position = pos;
+            b.transform.forward = Random.insideUnitSphere;
+            boids.Add(b);
+
         }
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        octree.Clear();
+       
+        foreach (var b in boids)
+        {
+            octree.Insert(b);
+        }
+
+        foreach (var b in boids)
+        {
+            b.Update();
+        }
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0.0f, 0.7f, 0.35f, 0.3f);
+        Gizmos.DrawCube(transform.position, boundingArea);
+    }
+
     public struct FlockData
     {
         public Vector3 position;

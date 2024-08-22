@@ -73,6 +73,7 @@ public class Spawner : MonoBehaviour
             //b.GetC<MeshRenderer>().material.color = chosenColor;
             b.transform.position = pos;
             b.transform.forward = Random.insideUnitSphere;
+            
         }
     }
 

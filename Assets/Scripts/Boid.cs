@@ -6,7 +6,7 @@ using UnityEngine;
 public class Boid : MonoBehaviour
 {
     FlockSettings settings;
-    
+    public Octree boidOctree;
     public Material wingMat;
     public Material fuseMat;
 
@@ -24,11 +24,11 @@ public class Boid : MonoBehaviour
     Vector3 avgSeperateDir;
     Vector3 avgFlockHeading;
 
+    
     //bool isPerched = false;
     //bool isPerching = false;
     private void Awake()
     {
-        
         cachedTransform = transform;
     }
     Vector3 SteerToward(Vector3 vector)
@@ -60,10 +60,11 @@ public class Boid : MonoBehaviour
         }
     }
 
-    public void Initialise(FlockSettings setting, Transform target)
+    public void Initialise(FlockSettings setting, Transform target, Octree octree)
     {
         this.settings = setting;
         this.cachedTarget = target;
+        this.boidOctree = octree;
 
         position = cachedTransform.position;
         forward = cachedTransform.forward;
@@ -84,19 +85,36 @@ public class Boid : MonoBehaviour
     }
 
    
-    void Update()
+    public void Update()
     {
         acceleration= Vector3.zero;  
-        
-        if(cachedTarget != null)
+        numWithinFlock = 0;
+
+        centerOfMass= Vector3.zero;
+        avgFlockHeading = Vector3.zero;
+        avgSeperateDir = Vector3.zero;
+
+        float neighborhoodRadius = settings.watchRadius;
+        List<Boid> neighbours= boidOctree.Query(position, neighborhoodRadius);
+
+        foreach (var neighbour in neighbours)
         {
-            Vector3 offset = (cachedTarget.position - position);
-            acceleration = SteerToward(offset) * settings.targetingWeight;
+            if (neighbour == this) continue;
+
+            numWithinFlock++;
+
+            centerOfMass += neighbour.position;
+
+            avgFlockHeading += neighbour.forward;
+            Vector3 offset = position - neighbour.position;
+            avgSeperateDir += offset / (offset.magnitude);
         }
+        
 
         if (numWithinFlock != 0)
         {
             centerOfMass /= numWithinFlock;
+            avgFlockHeading /= numWithinFlock;
             Vector3 offsetToCenter = (centerOfMass - position);
 
             var cohesion = SteerToward(centerOfMass) * settings.cohesionWeight;
@@ -106,6 +124,11 @@ public class Boid : MonoBehaviour
             acceleration += cohesion;
             acceleration += alignment;
             acceleration += seperation;
+        }
+        if (cachedTarget != null)
+        {
+            Vector3 offset = (cachedTarget.position - position);
+            acceleration = SteerToward(offset) * settings.targetingWeight;
         }
 
         if (IsHeadingForCollision())

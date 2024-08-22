@@ -6,6 +6,11 @@ using UnityEngine;
 [CreateAssetMenu]
 public class FlockSettings : ScriptableObject
 {
+    [Header("Spawn")]
+    public float watchRadius = 2.5f;
+    public float spawnRadius = 5f;
+    public int spawnCount = 2;
+    
     [Header("Steering")]
     public float minSpeed = 2f;
     public float maxSpeed = 6f;
@@ -17,6 +22,7 @@ public class FlockSettings : ScriptableObject
     public float cohesionWeight = 1f;
     public float seperateWeight = 1f;
     public float targetingWeight = 1f;
+    
 
     //public float targetWeight = 1;
 
