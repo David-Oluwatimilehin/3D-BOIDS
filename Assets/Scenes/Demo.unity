@@ -1441,10 +1441,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 2650232500240978921, guid: 3aa247055a9c4cb439bea7d358eb443e, type: 3}
   boids: []
-  chosenColor: {r: 0.25117472, g: 0.9716981, b: 0.69790363, a: 0}
+  chosenColor: {r: 0, g: 0.9622642, b: 0.59618545, a: 0}
   settings: {fileID: 11400000, guid: a1a32e80b8c81d34dbbbf31d9e6a111e, type: 2}
   target: {fileID: 8285455}
   boundingArea: {x: 20, y: 10, z: 20}
+  showBounds: 1
+  showSpawnArea: 0
 --- !u!4 &2078462079
 Transform:
   m_ObjectHideFlags: 0

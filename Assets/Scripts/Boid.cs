@@ -6,7 +6,7 @@ using UnityEngine;
 public class Boid : MonoBehaviour
 {
     FlockSettings settings;
-    public Octree boidOctree;
+
     public Material wingMat;
     public Material fuseMat;
 
@@ -44,8 +44,7 @@ public class Boid : MonoBehaviour
         {
             Vector3 dir = cachedTransform.TransformDirection(rayDirections[i]);
             Ray ray = new Ray(position, dir);
-            if (!Physics.SphereCast(ray, settings.boundsRadius, settings.collisionAvoidDst, settings.obstacleMask))
-            {
+            if (!Physics.SphereCast(ray, settings.boundsRadius, settings.collisionAvoidDst, settings.obstacleMask)) {
                 return dir;
             }
         }
@@ -60,11 +59,11 @@ public class Boid : MonoBehaviour
         }
     }
 
-    public void Initialise(FlockSettings setting, Transform target, Octree octree)
+    public void Initialise(FlockSettings setting, Transform target)
     {
         this.settings = setting;
         this.cachedTarget = target;
-        this.boidOctree = octree;
+        
 
         position = cachedTransform.position;
         forward = cachedTransform.forward;
@@ -76,8 +75,7 @@ public class Boid : MonoBehaviour
     bool IsHeadingForCollision()
     {
         RaycastHit hit;
-        if (Physics.SphereCast(position, settings.boundsRadius, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask))
-        {
+        if (Physics.SphereCast(position, settings.boundsRadius, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask)) {
             return true;
         }
         else { }
@@ -88,28 +86,11 @@ public class Boid : MonoBehaviour
     public void Update()
     {
         acceleration= Vector3.zero;  
-        numWithinFlock = 0;
-
-        centerOfMass= Vector3.zero;
-        avgFlockHeading = Vector3.zero;
-        avgSeperateDir = Vector3.zero;
-
-        float neighborhoodRadius = settings.watchRadius;
-        List<Boid> neighbours= boidOctree.Query(position, neighborhoodRadius);
-
-        foreach (var neighbour in neighbours)
+        if (cachedTarget != null)
         {
-            if (neighbour == this) continue;
-
-            numWithinFlock++;
-
-            centerOfMass += neighbour.position;
-
-            avgFlockHeading += neighbour.forward;
-            Vector3 offset = position - neighbour.position;
-            avgSeperateDir += offset / (offset.magnitude);
+            Vector3 offset = (cachedTarget.position - position);
+            acceleration = SteerToward(offset) * settings.targetingWeight;
         }
-        
 
         if (numWithinFlock != 0)
         {
@@ -125,11 +106,7 @@ public class Boid : MonoBehaviour
             acceleration += alignment;
             acceleration += seperation;
         }
-        if (cachedTarget != null)
-        {
-            Vector3 offset = (cachedTarget.position - position);
-            acceleration = SteerToward(offset) * settings.targetingWeight;
-        }
+        
 
         if (IsHeadingForCollision())
         {

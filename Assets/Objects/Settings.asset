@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Settings
   m_EditorClassIdentifier: 
   watchRadius: 1
-  spawnRadius: 10
-  spawnCount: 300
+  spawnRadius: 4.5
+  spawnCount: 120
   minSpeed: 2
   maxSpeed: 6
   steeringForce: 3
   alignWeight: 0.2
   cohesionWeight: 0.5
-  seperateWeight: 0.45
+  seperateWeight: 1
   targetingWeight: 0.6
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
-  boundsRadius: 0.5
-  avoidCollisionWeight: 15
+  boundsRadius: 0.27
+  avoidCollisionWeight: 10
   collisionAvoidDst: 5
